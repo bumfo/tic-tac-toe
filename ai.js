@@ -140,18 +140,14 @@
 
     --top;
 
-    if (depth < 1 && countAILoss > 0) {
+    if (countAILoss === count || (nextPlayer === 1 - aiPlayer && countAILoss > 0)) {
       return 1 + (1 - aiPlayer);
-    } 
-
-    if (countDraw === count) {
-      return -1;
-    } else if (countAIWin === count) {
+    } else if (countAIWin === count || (nextPlayer === aiPlayer && countAIWin > 0)) {
       return 1 + aiPlayer;
+    } else if (countDraw === count) {
+      return -1;
     } else if (countDraw + countAIWin === count) {
       return -1;
-    } else if (countAILoss === count) {
-      return 1 + (1 - aiPlayer);
     } else {
       return 0;
     }
