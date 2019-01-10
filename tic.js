@@ -295,7 +295,18 @@
   game.onTurnStart = () => {
     if (game.player === aiPlayer) {
       if (game.turn === 0) {
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.3) {
+          let moves = [
+            [0, 1],
+            [1, 0],
+            [2, 1],
+            [1, 2],
+          ];
+
+          let move = moves[Math.random() * moves.length | 0];
+
+          game.doMove(move[0], move[1]);
+        } else if (Math.random() < 0.7) {
           let moves = [
             [0, 0],
             [0, 2],
