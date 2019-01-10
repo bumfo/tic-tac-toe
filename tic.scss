@@ -10,6 +10,7 @@ main {
 
 .board {
   user-select: none;
+  -webkit-user-select: none;
 
   > .row {
     display: flex;
