@@ -68,7 +68,7 @@
   var loss = new Uint32Array(1024);
   var top = -1;
 
-  function dfs(nextPlayer) {
+  function dfs(nextPlayer, aiPlayer, depth = 0) {
     for (var i = 0; i < 3; ++i) {
       for (var j = 0; j < 3; ++j) {
         if (get(i, j) === 0) {
@@ -81,19 +81,19 @@
             draw[top + 1] = 0;
             loss[top + 1] = 0;
 
-            return;
+            return 1;
           } else if (judge === -1) {
             wins[top + 1] = 0;
             draw[top + 1] = 1;
             loss[top + 1] = 0;
 
-            return;
+            return -1;
           } else if (judge === 2) {
             wins[top + 1] = 0;
             draw[top + 1] = 0;
             loss[top + 1] = 1;
 
-            return;
+            return 2;
           }
         }
       }
@@ -105,28 +105,63 @@
     draw[top] = 0;
     loss[top] = 0;
 
+    var count = 0;
+    var countDraw = 0;
+    var countAIWin = 0;
+    var countAILoss = 0;
+
     for (var i = 0; i < 3; ++i) {
       for (var j = 0; j < 3; ++j) {
         if (get(i, j) === 0) {
+          ++count;
+
           set(i, j, 1 + nextPlayer);
-          dfs((nextPlayer + 1) % 2);
+          var r = dfs((1 - nextPlayer), aiPlayer, depth + 1);
           set(i, j, 0);
+
+          // if (depth === 0) {
+          //   console.log(i, j, r);
+          // }
 
           wins[top] += wins[top + 1];
           draw[top] += draw[top + 1];
           loss[top] += loss[top + 1];
+
+          if (r === -1) {
+            ++countDraw;
+          } else if (r === 1 + aiPlayer) {
+            ++countAIWin;
+          } else if (r === 1 + (1 - aiPlayer)) {
+            ++countAILoss;
+          }
         }
       }
     }
 
     --top;
+
+    if (depth < 1 && countAILoss > 0) {
+      return 1 + (1 - aiPlayer);
+    } 
+
+    if (countDraw === count) {
+      return -1;
+    } else if (countAIWin === count) {
+      return 1 + aiPlayer;
+    } else if (countDraw + countAIWin === count) {
+      return -1;
+    } else if (countAILoss === count) {
+      return 1 + (1 - aiPlayer);
+    } else {
+      return 0;
+    }
   }
 
   function run(boardData) {
     copyBoardFrom2DArray(boardData);
 
     top = -1;
-    dfs(0);
+    dfs(0, 0);
     if (top !== -1) {
       throw new Error('top = ' + top);
     }
@@ -135,31 +170,54 @@
   };
 
   function getBestMoves(boardData, nextPlayer) {
+    function getPriority(r) {
+      if (r === 1 + nextPlayer) {
+        return 2;
+      } else if (r === -1) {
+        return 1;
+      } else if (r === 0) {
+        return 0; 
+      } else if (r === 1 + (1 - nextPlayer)) {
+        return -1;
+      }
+    }
+
     class Move {
-      constructor(i, j, win, draw, loss) {
+      constructor(i, j, win, draw, loss, r) {
         this.i = i;
         this.j = j;
+
+        this.priority = getPriority(r);
         this.value = (2 * win + draw) / (2 * (win + draw + loss));
 
         this.win = win;
         this.draw = draw;
         this.loss = loss;
+
+        this.r = r;
       }
 
       toString() {
-        return `Move{(${this.i}, ${this.j}), ${(this.value * 100).toFixed(3)}%, ${this.win}, ${this.draw}, ${this.loss}}`;
+        // return `Move{(${this.i}, ${this.j}), ${(this.value * 100).toFixed(3)}%, ${this.win}, ${this.draw}, ${this.loss}}`;
+        return `Move{(${this.i}, ${this.j}), ${(this.value * 100).toFixed(3)}%, ${this.r}`;
+      }
+
+      compareTo(o) {
+        if (o === null) return -1;
+        if (this.priority === o.priority) return -(this.value - o.value);
+        return -(this.priority - o.priority);
       }
     }
 
-    function createMove(i, j) {
+    function createMove(i, j, r) {
       var a = wins[top + 1];
       var b = draw[top + 1];
       var c = loss[top + 1];
 
       if (nextPlayer === 0) {
-        return new Move(i, j, a, b, c);
+        return new Move(i, j, a, b, c, r);
       } else if (nextPlayer === 1) {
-        return new Move(i, j, c, b, a);
+        return new Move(i, j, c, b, a, r);
       } else {
         throw new Error('nextPlayer === ' + nextPlayer);
       }
@@ -170,7 +228,7 @@
     var moves = [];
 
     var bestMoves = [];
-    var best = 0;
+    var best = null;
 
     for (var i = 0; i < 3; ++i) {
       for (var j = 0; j < 3; ++j) {
@@ -180,9 +238,9 @@
           set(i, j, 0);
 
           if (judge === 1 + nextPlayer) {
-            return [new Move(i, j, 1, 0, 0)];
+            return [new Move(i, j, 1, 0, 0, 1 + nextPlayer)];
           } else if (judge === -1) {
-            return [new Move(i, j, 0, 1, 0)];
+            return [new Move(i, j, 0, 1, 0, -1)];
           }
         }
       }
@@ -194,24 +252,26 @@
           top = -1;
 
           set(i, j, 1 + nextPlayer);
-          dfs((nextPlayer + 1) % 2);
+          var r = dfs((1 - nextPlayer), nextPlayer);
           set(i, j, 0);
 
           if (top !== -1) {
             throw new Error('top = ' + top);
           }
 
-          var move = createMove(i, j);
-          var value = move.value;
+          var move = createMove(i, j, r);
 
           moves.push(move);
 
-          if (value > best) {
-            best = value;
+          var cmp = move.compareTo(best);
+
+          if (cmp < 0) {
+            best = move;
             bestMoves = [];
+            cmp = 0;
           }
 
-          if (value === best) {
+          if (cmp === 0) {
             bestMoves.push(move);
           }
         }
@@ -222,11 +282,11 @@
     //   return moves;
     // }
 
-    // moves.sort((a, b) => -(a.value - b.value));
+    moves.sort((a, b) => a.compareTo(b));
 
-    // for (let move of moves) {
-    //   console.log(move.toString());
-    // }
+    for (let move of moves) {
+      console.log(move.toString());
+    }
 
     return bestMoves;
   }
