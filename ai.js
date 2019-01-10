@@ -199,7 +199,7 @@
 
       toString() {
         // return `Move{(${this.i}, ${this.j}), ${(this.value * 100).toFixed(3)}%, ${this.win}, ${this.draw}, ${this.loss}}`;
-        return `Move{(${this.i}, ${this.j}), ${(this.value * 100).toFixed(3)}%, ${this.r}`;
+        return `Move{(${this.i}, ${this.j}), ${this.priority}, ${(this.value * 100).toFixed(3)}%`;
       }
 
       compareTo(o) {
