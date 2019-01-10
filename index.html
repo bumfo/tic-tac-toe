@@ -26,3 +26,8 @@
 
 <script src="ai.js?ver=0.03" defer></script>
 <script src="tic.js?ver=0.03" defer></script>
+<script defer>
+  window.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+  }, { passive: false });
+</script>
