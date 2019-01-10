@@ -1,3 +1,5 @@
+$color-fade-easing: cubic-bezier(0.4, 0.0, 0.2, 1);
+
 body {
   margin: 0;
   padding: 0;
@@ -56,11 +58,11 @@ main {
         border-left: none;
       }
 
-      transition: background ease .1s;
+      transition: background $color-fade-easing .5s;
 
       &.active {
         background: rgba(0, 0, 0, 0.1);
-        transition: background ease 0s;
+        transition: background $color-fade-easing 0s;
       }
     }
 

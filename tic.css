@@ -46,14 +46,14 @@ main {
   font-weight: 200;
   text-align: center;
   line-height: 100px;
-  transition: background ease 0.1s;
+  transition: background cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
 }
 .board > .row > div:first-child {
   border-left: none;
 }
 .board > .row > div.active {
   background: rgba(0, 0, 0, 0.1);
-  transition: background ease 0s;
+  transition: background cubic-bezier(0.4, 0, 0.2, 1) 0s;
 }
 .board > .row:first-child > div {
   border-top: none;
