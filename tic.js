@@ -12,6 +12,7 @@
       this.player = 0;
 
       this.view = null;
+      this.onTurnStart = () => {};
     }
 
     clear() {
@@ -28,7 +29,7 @@
       return this.board[i][j];
     }
 
-    onClick(i, j) {
+    doMove(i, j) {
       if (this.board[i][j] == 0) {
         console.log(this.player, 'move', i, j);
 
@@ -42,12 +43,16 @@
       this.clear();
 
       this.view.onUpdate();
+
+      this.onTurnStart();
     }
 
     nextTurn() {
       this.player = (this.player + 1) % 2;
 
       this.view.onUpdate();
+
+      this.onTurnStart();
     }
   }
 
@@ -58,7 +63,7 @@
       this.j = j;
 
       el.addEventListener('click', e => {
-        game.onClick(i, j);
+        game.doMove(i, j);
       });
 
       this.game = game;
@@ -121,8 +126,24 @@
     }
   }
 
+  var aiPlayer = 0;
+
   const game = new Game();
   new Board(document.querySelector('#board'), game);
+
+  game.onTurnStart = () => {
+    if (game.player === aiPlayer) {
+      let moves = AI.getBestMoves(game.board, aiPlayer);
+
+      if (moves.length > 0) {
+        let move = moves[Math.random() * moves.length | 0];
+
+        console.log(move);
+
+        game.doMove(move.i, move.j);
+      }
+    }
+  }
 
   game.nextRound();
 }.call(this));

@@ -115,7 +115,7 @@
     --top;
   }
 
-  this.runAI = function(boardData) {
+  function run(boardData) {
     copyBoardFrom2DArray(boardData);
 
     top = -1;
@@ -127,7 +127,7 @@
     console.log(wins[top + 1], draw[top + 1], loss[top + 1]);
   };
 
-  this.getBestMoves = function(boardData, nextPlayer) {
+  function getBestMoves(boardData, nextPlayer) {
     class Move {
       constructor(i, j, winRate) {
         this.i = i;
@@ -187,5 +187,10 @@
 
     return bestMoves;
   }
+
+  this.AI = {
+    run,
+    getBestMoves,
+  };
 
 }.call(this));

@@ -1,12 +1,12 @@
-const ai = require('./ai.js');
+const { AI } = require('./ai.js');
 
-// ai.runAI([
+// AI.runAI([
 //   [0, 0, 0],
 //   [0, 0, 0],
 //   [0, 0, 0],
 // ]);
 
-console.log(ai.getBestMoves([
+console.log(AI.getBestMoves([
   [0, 0, 0],
   [0, 1, 0],
   [0, 0, 0],
