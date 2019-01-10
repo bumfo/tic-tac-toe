@@ -5,10 +5,15 @@ body {
 }
 
 main {
-  margin: 30px;
+  display: flex;
+  justify-content: center;
 
   @media (min-height: 100vw) and (max-width: 600px) {
     margin: calc((100vw - 300px) / 2);
+  }
+
+  @media (min-width: 600px) {
+    margin: 150px;
   }
 }
 
@@ -23,10 +28,7 @@ main {
   flex-direction: column;
 
   width: 3 * 100px;
-
-  @media (max-width: 600px) {
-    margin: auto;
-  }
+  margin: auto;
 
   > .row {
     display: flex;
