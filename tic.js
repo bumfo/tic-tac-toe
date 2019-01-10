@@ -215,14 +215,18 @@
           game.doMove(1, 1);
         }
       } else {
-        let moves = AI.getBestMoves(game.board, aiPlayer);
+        try {
+          let moves = AI.getBestMoves(game.board, aiPlayer);
 
-        if (moves.length > 0) {
-          let move = moves[Math.random() * moves.length | 0];
+          if (moves.length > 0) {
+            let move = moves[Math.random() * moves.length | 0];
 
-          console.log(move.toString());
+            console.log(move.toString());
 
-          game.doMove(move.i, move.j);
+            game.doMove(move.i, move.j);
+          }
+        } catch (e) {
+          alert(e);
         }
       }
     }
