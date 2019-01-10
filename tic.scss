@@ -5,7 +5,11 @@ body {
 }
 
 main {
-  margin: 15px;
+  margin: 30px;
+
+  @media (min-height: 100vw) and (max-width: 600px) {
+    margin: calc((100vw - 300px) / 2);
+  }
 }
 
 .board {
@@ -15,9 +19,21 @@ main {
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 
+  display: flex;
+  flex-direction: column;
+
+  width: 3 * 100px;
+
+  @media (max-width: 600px) {
+    margin: auto;
+  }
+
   > .row {
     display: flex;
     flex-direction: row;
+
+    width: 3 * 100px;
+
     > div {
       flex: 0 0 100px;
       height: 100px;
