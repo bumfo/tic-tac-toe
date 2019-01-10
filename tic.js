@@ -200,7 +200,7 @@
       if (moves.length > 0) {
         let move = moves[Math.random() * moves.length | 0];
 
-        console.log(move);
+        console.log(move.toString());
 
         game.doMove(move.i, move.j);
       }

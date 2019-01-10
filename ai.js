@@ -129,22 +129,30 @@
 
   function getBestMoves(boardData, nextPlayer) {
     class Move {
-      constructor(i, j, winRate) {
+      constructor(i, j, win, draw, loss) {
         this.i = i;
         this.j = j;
-        this.winRate = winRate;
+        this.winRate = (2 * win + draw) / (2 * (win + draw + loss));
+
+        this.win = win;
+        this.draw = draw;
+        this.loss = loss;
+      }
+
+      toString() {
+        return `Move{(${this.i}, ${this.j}), ${this.winRate}, ${this.win}, ${this.draw}, ${this.loss}}`;
       }
     }
 
-    function getWinRate() {
+    function createMove(i, j) {
       var a = wins[top + 1];
       var b = draw[top + 1];
       var c = loss[top + 1];
 
       if (nextPlayer === 0) {
-        return (2 * a + b) / (2 * (a + b + c));
+        return new Move(i, j, a, b, c);
       } else if (nextPlayer === 1) {
-        return (2 * c + b) / (2 * (a + b + c));
+        return new Move(i, j, c, b, a);
       } else {
         throw new Error('nextPlayer === ' + nextPlayer);
       }
@@ -166,10 +174,8 @@
             throw new Error('top = ' + top);
           }
 
-          var winRate = getWinRate();
-
-          // console.log(i, j, wins[top + 1], draw[top + 1], loss[top + 1], winRate);
-          // console.log(i, j, (2 * wins[top + 1] + draw[top + 1]) / (2 * loss[top + 1]));
+          var move = createMove(i, j);
+          var winRate = move.winRate;
 
           if (winRate > best) {
             best = winRate;
@@ -177,7 +183,7 @@
           }
 
           if (winRate === best) {
-            bestMoves.push(new Move(i, j, winRate));
+            bestMoves.push(move);
           }
 
           set(i, j, 0);
