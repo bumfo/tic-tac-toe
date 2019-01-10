@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  padding: 0;
+  font: 16px/1.5 "helvetica neue", sans-serif;
+}
+
+main {
+  margin: 15px;
+}
+
+.board {
+  user-select: none;
+}
+.board > .row {
+  display: flex;
+  flex-direction: row;
+}
+.board > .row > div {
+  flex: 0 0 100px;
+  height: 100px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  border-right: none;
+  font-size: 32px;
+  font-weight: 200;
+  text-align: center;
+  line-height: 100px;
+}
+.board > .row > div:first-child {
+  border-left: none;
+}
+.board > .row:first-child > div {
+  border-top: none;
+}
