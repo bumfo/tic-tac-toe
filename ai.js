@@ -284,7 +284,8 @@
 
     moves.sort((a, b) => a.compareTo(b));
 
-    for (let move of moves) {
+    for (var k = 0; k < moves.length; ++k) {
+      let move = moves[k];
       console.log(move.toString());
     }
 
