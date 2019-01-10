@@ -69,26 +69,34 @@
   var top = -1;
 
   function dfs(nextPlayer) {
-    var judge = judgeBoard();
+    for (var i = 0; i < 3; ++i) {
+      for (var j = 0; j < 3; ++j) {
+        if (get(i, j) === 0) {
+          set(i, j, 1 + nextPlayer);
+          var judge = judgeBoard();
+          set(i, j, 0);
 
-    if (judge === 1) {
-      wins[top + 1] = 1;
-      draw[top + 1] = 0;
-      loss[top + 1] = 0;
+          if (judge === 1) {
+            wins[top + 1] = 1;
+            draw[top + 1] = 0;
+            loss[top + 1] = 0;
 
-      return;
-    } else if (judge === -1) {
-      wins[top + 1] = 0;
-      draw[top + 1] = 1;
-      loss[top + 1] = 0;
+            return;
+          } else if (judge === -1) {
+            wins[top + 1] = 0;
+            draw[top + 1] = 1;
+            loss[top + 1] = 0;
 
-      return;
-    } else if (judge === 2) {
-      wins[top + 1] = 0;
-      draw[top + 1] = 0;
-      loss[top + 1] = 1;
+            return;
+          } else if (judge === 2) {
+            wins[top + 1] = 0;
+            draw[top + 1] = 0;
+            loss[top + 1] = 1;
 
-      return;
+            return;
+          }
+        }
+      }
     }
 
     ++top;
@@ -101,13 +109,12 @@
       for (var j = 0; j < 3; ++j) {
         if (get(i, j) === 0) {
           set(i, j, 1 + nextPlayer);
-
           dfs((nextPlayer + 1) % 2);
+          set(i, j, 0);
+
           wins[top] += wins[top + 1];
           draw[top] += draw[top + 1];
           loss[top] += loss[top + 1];
-
-          set(i, j, 0);
         }
       }
     }
@@ -132,7 +139,7 @@
       constructor(i, j, win, draw, loss) {
         this.i = i;
         this.j = j;
-        this.winRate = (2 * win + draw) / (2 * (win + draw + loss));
+        this.value = (2 * win + draw) / (2 * (win + draw + loss));
 
         this.win = win;
         this.draw = draw;
@@ -140,7 +147,7 @@
       }
 
       toString() {
-        return `Move{(${this.i}, ${this.j}), ${this.winRate}, ${this.win}, ${this.draw}, ${this.loss}}`;
+        return `Move{(${this.i}, ${this.j}), ${(this.value * 100).toFixed(3)}%, ${this.win}, ${this.draw}, ${this.loss}}`;
       }
     }
 
@@ -160,6 +167,8 @@
 
     copyBoardFrom2DArray(boardData);
 
+    var moves = [];
+
     var bestMoves = [];
     var best = 0;
 
@@ -167,28 +176,56 @@
       for (var j = 0; j < 3; ++j) {
         if (get(i, j) === 0) {
           set(i, j, 1 + nextPlayer);
+          var judge = judgeBoard();
+          set(i, j, 0);
 
+          if (judge === 1 + nextPlayer) {
+            return [new Move(i, j, 1, 0, 0)];
+          } else if (judge === -1) {
+            return [new Move(i, j, 0, 1, 0)];
+          }
+        }
+      }
+    }
+
+    for (var i = 0; i < 3; ++i) {
+      for (var j = 0; j < 3; ++j) {
+        if (get(i, j) === 0) {
           top = -1;
+
+          set(i, j, 1 + nextPlayer);
           dfs((nextPlayer + 1) % 2);
+          set(i, j, 0);
+
           if (top !== -1) {
             throw new Error('top = ' + top);
           }
 
           var move = createMove(i, j);
-          var winRate = move.winRate;
+          var value = move.value;
 
-          if (winRate > best) {
-            best = winRate;
+          moves.push(move);
+
+          if (value > best) {
+            best = value;
             bestMoves = [];
           }
 
-          if (winRate === best) {
+          if (value === best) {
             bestMoves.push(move);
           }
-
-          set(i, j, 0);
         }
       }
+    }
+
+    if (bestMoves.length === 0) {
+      return moves;
+    }
+
+    moves.sort((a, b) => -(a.value - b.value));
+
+    for (let move of moves) {
+      console.log(move.toString());
     }
 
     return bestMoves;
