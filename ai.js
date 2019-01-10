@@ -218,15 +218,15 @@
       }
     }
 
-    if (bestMoves.length === 0) {
-      return moves;
-    }
+    // if (bestMoves.length === 0) {
+    //   return moves;
+    // }
 
-    moves.sort((a, b) => -(a.value - b.value));
+    // moves.sort((a, b) => -(a.value - b.value));
 
-    for (let move of moves) {
-      console.log(move.toString());
-    }
+    // for (let move of moves) {
+    //   console.log(move.toString());
+    // }
 
     return bestMoves;
   }
