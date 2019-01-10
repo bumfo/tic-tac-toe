@@ -8,6 +8,8 @@
         board[i] = new Uint8Array(3);
       }
 
+      this.state = 0;
+
       this.board = board;
       this.player = 0;
 
@@ -16,6 +18,7 @@
     }
 
     clear() {
+      this.state = 0;
       this.player = 0;
       for (var i = 0; i < 3; ++i) {
         var arr = this.board[i];
@@ -30,13 +33,54 @@
     }
 
     doMove(i, j) {
-      if (this.board[i][j] == 0) {
-        console.log(this.player, 'move', i, j);
+      if (this.state === 0) {
+        if (this.board[i][j] === 0) {
+          console.log(this.player, 'move', i, j);
 
-        this.board[i][j] = this.player + 1;
+          this.board[i][j] = this.player + 1;
 
-        this.nextTurn();
+          this.nextTurn();
+        }
       }
+    }
+
+    judgeBoard() {
+      var a = this.board;
+
+      for (var i = 0; i < 3; ++i) {
+        if (a[i][0] !== 0 && a[i][0] === a[i][1] && a[i][1] === a[i][2]) {
+          return a[i][0];
+        }
+      }
+
+      for (var j = 0; j < 3; ++j) {
+        if (a[0][j] !== 0 && a[0][j] === a[1][j] && a[1][j] === a[2][j]) {
+          return a[0][j];
+        }
+      }
+
+      if (a[0][0] !== 0 && a[0][0] === a[1][1] && a[1][1] === a[2][2]) {
+        return a[0][0];
+      }
+
+      if (a[0][2] !== 0 && a[0][2] === a[1][1] && a[1][1] === a[2][0]) {
+        return a[0][2];
+      }
+
+      var draw = true;
+
+      for (var k = 0; k < 9; ++k) {
+        if (a[k / 3 | 0][k % 3] === 0) {
+          draw = false;
+          break;
+        }
+      }
+
+      if (draw) {
+        return -1;
+      }
+
+      return 0;
     }
 
     nextRound() {
@@ -48,11 +92,26 @@
     }
 
     nextTurn() {
-      this.player = (this.player + 1) % 2;
+      var judge = this.judgeBoard();
+      if (judge === -1) {
+        this.state = -1;
 
-      this.view.onUpdate();
+        this.view.onUpdate();
+      } else if (judge === 1) {
+        this.state = 1;
 
-      this.onTurnStart();
+        this.view.onUpdate();
+      } else if (judge === 2) {
+        this.state = 2;
+
+        this.view.onUpdate();
+      } else {
+        this.player = (this.player + 1) % 2;
+
+        this.view.onUpdate();
+
+        this.onTurnStart();
+      }
     }
   }
 
