@@ -95,14 +95,17 @@
       var judge = this.judgeBoard();
       if (judge === -1) {
         this.state = -1;
+        console.log('draw');
 
         this.view.onUpdate();
       } else if (judge === 1) {
         this.state = 1;
+        console.log('X wins');
 
         this.view.onUpdate();
       } else if (judge === 2) {
         this.state = 2;
+        console.log('O wins');
 
         this.view.onUpdate();
       } else {
