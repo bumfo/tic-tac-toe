@@ -188,7 +188,7 @@
     }
   }
 
-  var aiPlayer = 0;
+  var aiPlayer = Math.random() * 2 | 0;
 
   const game = new Game();
   new Board(document.querySelector('#board'), game);
