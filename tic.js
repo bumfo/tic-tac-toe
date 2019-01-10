@@ -128,8 +128,87 @@
       this.i = i;
       this.j = j;
 
+      this.down = false;
+      this.active = false;
+
+      const onDown = () => {
+        this.setDown(true);
+      }
+
+      const onUp = () => {
+        this.setDown(false);
+        if (this.active) {
+          game.doMove(i, j);
+        }
+      }
+
+      const onCancel = () => {
+        this.setDown(false);
+      }
+
+      const onMove = (target, pos) => {
+        if (target.contains(document.elementFromPoint(pos.clientX, pos.clientY))) {
+          this.setActive(true);
+        } else {
+          this.setActive(false);
+        }
+      }
+
       el.addEventListener('click', e => {
         game.doMove(i, j);
+      });
+
+      el.addEventListener('touchstart', e => {
+        e.preventDefault();
+
+        if (e.touches.length === 1) {
+          onDown();
+        }
+      });
+
+      el.addEventListener('touchmove', e => {
+        e.preventDefault();
+
+        if (this.down) {
+          let touch = e.changedTouches[0];
+
+          onMove(el, touch);
+        }
+      });
+
+      el.addEventListener('touchend', e => {
+        e.preventDefault();
+
+        if (this.down) {
+          onUp();
+        }
+      });
+
+      el.addEventListener('touchcancel', e => {
+        onCancel();
+      });
+
+      const onMouseMove = e => {
+        if (this.down) {
+          onMove(el, e);
+        }
+      };
+
+      const onMouseUp = e => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+
+        if (this.down) {
+          e.preventDefault();
+          onUp();
+        }
+      };
+
+      el.addEventListener('mousedown', e => {
+        onDown();
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
       });
 
       this.game = game;
@@ -155,6 +234,21 @@
       }
 
       this.el.textContent = text;
+    }
+
+    setDown(down) {
+      this.down = down;
+      this.setActive(down);
+    }
+
+    setActive(active) {
+      this.active = active;
+
+      if (this.down && this.active) {
+        this.el.classList.add('active');
+      } else {
+        this.el.classList.remove('active');
+      }
     }
   }
 
