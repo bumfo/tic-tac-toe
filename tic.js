@@ -11,6 +11,7 @@
       this.state = 0;
 
       this.board = board;
+      this.turn = 0;
       this.player = 0;
 
       this.view = null;
@@ -19,7 +20,9 @@
 
     clear() {
       this.state = 0;
+      this.turn = 0;
       this.player = 0;
+
       for (var i = 0; i < 3; ++i) {
         var arr = this.board[i];
         for (var j = 0; j < 3; ++j) {
@@ -110,6 +113,7 @@
         this.view.onUpdate();
       } else {
         this.player = (this.player + 1) % 2;
+        this.turn += 1;
 
         this.view.onUpdate();
 
@@ -195,14 +199,31 @@
 
   game.onTurnStart = () => {
     if (game.player === aiPlayer) {
-      let moves = AI.getBestMoves(game.board, aiPlayer);
+      if (game.turn === 0) {
+        if (Math.random() < 0.5) {
+          let moves = [
+            [0, 0],
+            [0, 2],
+            [2, 0],
+            [2, 2],
+          ];
 
-      if (moves.length > 0) {
-        let move = moves[Math.random() * moves.length | 0];
+          let move = moves[Math.random() * moves.length | 0];
 
-        console.log(move.toString());
+          game.doMove(move[0], move[1]);
+        } else {
+          game.doMove(1, 1);
+        }
+      } else {
+        let moves = AI.getBestMoves(game.board, aiPlayer);
 
-        game.doMove(move.i, move.j);
+        if (moves.length > 0) {
+          let move = moves[Math.random() * moves.length | 0];
+
+          console.log(move.toString());
+
+          game.doMove(move.i, move.j);
+        }
       }
     }
   }
