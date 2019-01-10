@@ -136,10 +136,10 @@
       }
 
       const onUp = () => {
-        this.setDown(false);
         if (this.active) {
           game.doMove(i, j);
         }
+        this.setDown(false);
       }
 
       const onCancel = () => {
@@ -154,9 +154,10 @@
         }
       }
 
-      el.addEventListener('click', e => {
-        game.doMove(i, j);
-      });
+      // el.addEventListener('click', e => {
+      //   console.log(e);
+      //   game.doMove(i, j);
+      // });
 
       el.addEventListener('touchstart', e => {
         e.preventDefault();
