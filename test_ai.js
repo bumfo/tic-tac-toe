@@ -1,7 +1,13 @@
 const ai = require('./ai.js');
 
-ai.run([
+// ai.runAI([
+//   [0, 0, 0],
+//   [0, 0, 0],
+//   [0, 0, 0],
+// ]);
+
+console.log(ai.getBestMoves([
   [0, 0, 0],
+  [0, 1, 0],
   [0, 0, 0],
-  [0, 0, 0],
-]);
+], 1));
