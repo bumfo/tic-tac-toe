@@ -144,7 +144,7 @@
       return 1 + (1 - aiPlayer);
     } else if (countAIWin === count || (nextPlayer === aiPlayer && countAIWin > 0)) {
       return 1 + aiPlayer;
-    } else if (countDraw === count) {
+    } else if (countDraw === count || (nextPlayer === aiPlayer && countDraw > 0)) {
       return -1;
     } else if (countDraw + countAIWin === count) {
       return -1;
