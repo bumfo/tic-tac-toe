@@ -7,13 +7,14 @@ body {
 main {
   display: flex;
   justify-content: center;
+  margin: calc((100vh - 300px) / 2);
 }
 @media (min-height: 100vw) and (max-width: 600px) {
   main {
     margin: calc((100vw - 300px) / 2);
   }
 }
-@media (min-width: 600px) {
+@media (min-width: 600px) and (min-height: 600px) {
   main {
     margin: 150px;
   }
